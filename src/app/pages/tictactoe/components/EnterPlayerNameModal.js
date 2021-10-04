@@ -12,7 +12,21 @@ import {
   Input
 } from '@chakra-ui/react';
 
-export const EnterPlayerNameModal = ({isOpen, onClose}) => {
+import { useDispatch, useSelector, connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+
+import { updatePlayers } from '../actions';
+
+const EnterPlayerNameModal = ({isOpen, onClose, players}) => {
+  const { playerOne, playerTwo } = players;
+  const dispatch = useDispatch();
+
+  const onChange = async(e) => {
+    let temp = {...players};
+    temp[e.target.name].name = e.target.value;
+    await dispatch(updatePlayers(temp));
+  }
+
   return (
     <Modal closeOnOverlayClick={false} isOpen={isOpen}>
       <ModalOverlay />
@@ -21,17 +35,17 @@ export const EnterPlayerNameModal = ({isOpen, onClose}) => {
         <ModalBody pb={6}>
           <FormControl>
             <FormLabel>First player (Symbol - O)</FormLabel>
-            <Input placeholder="First name" />
+            <Input placeholder="First Player" name="playerOne" value={playerOne.name} onChange={onChange}/>
           </FormControl>
 
           <FormControl mt={4}>
             <FormLabel>Second player (Symbol - X)</FormLabel>
-            <Input placeholder="Last name" />
+            <Input placeholder="Second Player" name="playerTwo" value={playerTwo.name} onChange={onChange}/>
           </FormControl>
         </ModalBody>
 
         <ModalFooter>
-          <Button colorScheme="blue">
+          <Button onClick={onClose} colorScheme="blue" disabled={!playerOne.name || !playerTwo.name}>
             Start!
           </Button>
         </ModalFooter>
@@ -39,3 +53,19 @@ export const EnterPlayerNameModal = ({isOpen, onClose}) => {
     </Modal>
   )
 }
+
+const mapStateToProps = (store) => {
+	return {
+		players: store.gameplay.players
+	};
+};
+
+const mapDispatchToProps = (dispatch) => {
+	return bindActionCreators(
+		{
+		},
+		dispatch
+	);
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(EnterPlayerNameModal);

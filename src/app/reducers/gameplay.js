@@ -1,14 +1,20 @@
 import { getCachedAllPokemons, getCachedMyPokemons } from '../pages/common/actions';
 
 const initialState = {
-  activeBoard: [[0, 1, 0], [1, 2, 0], [0, 2, 1]],
+  activeBoard: [[0, 0, 0], [0, 0, 0], [0, 0, 0]],
   players: {
-    playerOne: {}, //{name, symbol/identity}
-    playerTwo: {},
+    playerOne: {
+      name: '',
+      symbol: 'O'
+    }, //{name, symbol/identity}
+    playerTwo: {
+      name: '',
+      symbol: 'X'
+    },
   },
-  gameActivity: [],
-  activePlayer: '',
-  previousGames: [], //{playerOne, playerTwo, gameActivity, finalBoard}
+  currentGameActivities: [], //player(obj), row, column
+  activePlayer: 'playerOne',
+  previousGames: [], //{playerOne, playerTwo, currentGameActivities, finalBoard, matchedCombinationTiles: [], verdict}
 };
 
 export default (state = initialState, action) => {
@@ -25,10 +31,22 @@ export default (state = initialState, action) => {
         activeBoard: action.payload
       };
     }
+    case "SAVE_GAMES": {
+      return {
+        ...state,
+        previousGames: action.payload
+      };
+    }
+    case "SAVE_ACTIVITIES": {
+      return {
+        ...state,
+        currentGameActivities: action.payload
+      };
+    }
     case "SAVE": {
       return {
         ...state,
-        [action.payload.type]: action.payload.data
+        [action.payload.key]: action.payload.value
       };
     }
     default:
