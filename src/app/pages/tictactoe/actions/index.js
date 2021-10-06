@@ -72,6 +72,10 @@ export const clearSession = () => async (dispatch) => {
 	});
 }
 
+/*
+ * checkIfAnyMatchingCombination method
+ * takes in a board array and check for any combinations which would determine the game result
+*/
 export const checkIfAnyMatchingCombination = (board) => {
   if (board[0][0]) {
     if ((board[0][0] === board[0][1]) && (board[0][0] === board[0][2])) {

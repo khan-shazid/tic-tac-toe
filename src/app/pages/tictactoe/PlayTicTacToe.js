@@ -22,6 +22,9 @@ function PlayTicTacToe ({players, activeBoard, currentGameActivities, activePlay
   const dispatch = useDispatch();
 
   useEffect(() => {
+    /*
+     * checks and sets current active player.
+    */
     if (currentGameActivities.length) {
       if (currentGameActivities[currentGameActivities.length - 1].player.symbol === 1) {
         dispatch(update('activePlayer', 'playerTwo'));
@@ -29,11 +32,16 @@ function PlayTicTacToe ({players, activeBoard, currentGameActivities, activePlay
         dispatch(update('activePlayer', 'playerOne'));
       }
     }
+    
     if (players.playerOne.name && players.playerTwo.name) {
       setShowPlayerNameEntryModal(false);
     }
   }, []);
 
+  /*
+   * onChangeBoard method
+   * this methods updates the active board and also update activities. also calls the resultChecking method
+  */
   const onChangeBoard = async(row, column) => {
     let board = [...activeBoard];
     board[row][column] = activePlayer === 'playerOne' ? 1 : 2;
@@ -48,6 +56,11 @@ function PlayTicTacToe ({players, activeBoard, currentGameActivities, activePlay
     checkResultAndUpdateHistory(activities);
   }
 
+  /*
+   * checkResultAndUpdateHistory method
+   * this methods checks current active board for existing pattern.
+   * if there is pattern/all 9 steps are done then it will finish the game and save it to history
+  */
   const checkResultAndUpdateHistory = async(activities) => {
     let result = checkIfAnyMatchingCombination(activeBoard);
     if (result.verdict || activities.length === 9) {

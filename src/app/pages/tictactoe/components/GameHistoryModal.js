@@ -63,6 +63,10 @@ export default function GameHistoryModal({isOpen, onClose, game}) {
     await setShowReplay(true);
   };
 
+  /*
+   * mapActivityToBoard methods
+   * needed for the replay. takes in the activity list and maps activity to board till active step
+  */
   const mapActivityToBoard = (data) => {
     let temp = copyObj(EMPTY_BOARD);
     for (let i = 0; i <= replayStepCounter; i++) {
