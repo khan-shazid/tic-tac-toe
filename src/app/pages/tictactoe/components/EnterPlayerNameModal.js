@@ -5,14 +5,13 @@ import {
   ModalHeader,
   ModalFooter,
   ModalBody,
-  ModalCloseButton,
   Button,
   FormControl,
   FormLabel,
   Input
 } from '@chakra-ui/react';
 
-import { useDispatch, useSelector, connect } from 'react-redux';
+import { useDispatch, connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import { updatePlayers } from '../actions';

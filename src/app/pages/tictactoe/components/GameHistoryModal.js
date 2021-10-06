@@ -8,22 +8,16 @@ import {
   ModalBody,
   ModalCloseButton,
   Button,
-  FormControl,
-  FormLabel,
-  Input,
   Text,
   Flex,
   Box
 } from '@chakra-ui/react';
 
-import { useDispatch, useSelector, connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-
-import { useInterval } from '../../../customHooks';
 import { TicTacToeBoard } from './TicTacToeBoard';
 import { ActivityLog } from './ActivityLog';
 
-const EMPTY_BOARD = [[0,0,0],[0,0,0],[0,0,0]];
+import { EMPTY_BOARD } from '../../../constants';
+import { copyObj } from '../../../services/Utility';
 
 export default function GameHistoryModal({isOpen, onClose, game}) {
   let [board, setBoard] = useState(game.finalBoard);
@@ -63,14 +57,14 @@ export default function GameHistoryModal({isOpen, onClose, game}) {
   }, [showReplay, replayStepCounter]);
 
   const replay = async() => {
-    await setBoard(EMPTY_BOARD);
+    await setBoard(copyObj(EMPTY_BOARD));
     await setActivities([]);
     await setReplayStepCounter(0);
     await setShowReplay(true);
   };
 
   const mapActivityToBoard = (data) => {
-    let temp = JSON.parse(JSON.stringify(EMPTY_BOARD));
+    let temp = copyObj(EMPTY_BOARD);
     for (let i = 0; i <= replayStepCounter; i++) {
       temp[data[i].row][data[i].column] = data[i].player.symbol;
     }
@@ -87,7 +81,7 @@ export default function GameHistoryModal({isOpen, onClose, game}) {
         <ModalBody pb={6}>
           <Text pr="5" fontWeight="900">Result: {game.verdict === `draw` ? `Match drawn` : `${game[game.verdict].name} won the match!`}</Text>
           <Flex justify="space-between" align="center">
-            <TicTacToeBoard board={board} matchedCombinationTiles={game.matchedCombinationTiles}/>
+            <TicTacToeBoard board={board} matchedCombinationTiles={game.matchedCombinationTiles} isHistory={true}/>
             <Box width="5"/>
             <ActivityLog activities={activities} />
           </Flex>

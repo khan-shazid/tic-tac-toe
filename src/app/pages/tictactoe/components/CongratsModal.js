@@ -2,21 +2,18 @@ import {
   Modal,
   ModalOverlay,
   ModalContent,
-  ModalHeader,
   ModalFooter,
   ModalBody,
-  ModalCloseButton,
   Button,
-  FormControl,
-  FormLabel,
-  Input,
   Text,
 } from '@chakra-ui/react';
 
-import { useDispatch, useSelector, connect } from 'react-redux';
+import { useDispatch, connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import { update, updateBoard, saveActivities } from '../actions';
+import { EMPTY_BOARD } from '../../../constants';
+import { copyObj } from '../../../services/Utility';
 
 const CongratsModal = ({isOpen, onClose, players, previousGames}) => {
   const lastGame = previousGames.length ? previousGames[previousGames.length - 1] : {};
@@ -24,7 +21,7 @@ const CongratsModal = ({isOpen, onClose, players, previousGames}) => {
 
   const onContinue = async() => {
     await dispatch(saveActivities([]));
-    await dispatch(updateBoard([[0,0,0],[0,0,0],[0,0,0]]));
+    await dispatch(updateBoard(copyObj(EMPTY_BOARD)));
     if (lastGame.activities.length) {
       let activePlayer = lastGame.activities[0].player.symbol === 1 ? 'playerTwo' : 'playerOne';
       dispatch(update('activePlayer', activePlayer));

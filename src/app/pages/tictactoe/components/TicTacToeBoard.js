@@ -1,10 +1,11 @@
 import { Grid, Center } from '@chakra-ui/react';
 import { BoardItem } from './BoardItem';
-export const TicTacToeBoard = ({board, onChange, matchedCombinationTiles}) => {
-  console.log("matchedCombinationTiles", matchedCombinationTiles)
+import { BASE_BORDER_WIDTH } from '../../../constants';
+
+export const TicTacToeBoard = ({board, onChange, matchedCombinationTiles,isHistory}) => {
   return (
     <Center>
-      <Grid templateColumns="repeat(3, 1fr)" borderWidth="1px">
+      <Grid templateColumns="repeat(3, 1fr)" borderWidth={BASE_BORDER_WIDTH}>
       {
         board.map((row, i) => {
           return row.map((value, j) => {
@@ -17,7 +18,7 @@ export const TicTacToeBoard = ({board, onChange, matchedCombinationTiles}) => {
               });
 
             }
-            return <BoardItem value={value} key={`${i}_${j}`} onChange={() => onChange(i, j)} withSuccessBackground={withSuccessBackground}/>
+            return <BoardItem value={value} key={`${i}_${j}`} onChange={() => onChange(i, j)} withSuccessBackground={withSuccessBackground} isHistory={isHistory}/>
           })
         })
       }
