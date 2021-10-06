@@ -5,11 +5,11 @@ const initialState = {
   players: {
     playerOne: {
       name: '',
-      symbol: 'O'
+      symbol: 1
     }, //{name, symbol/identity}
     playerTwo: {
       name: '',
-      symbol: 'X'
+      symbol: 2
     },
   },
   currentGameActivities: [], //player(obj), row, column

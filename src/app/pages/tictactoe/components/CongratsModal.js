@@ -26,7 +26,7 @@ const CongratsModal = ({isOpen, onClose, players, previousGames}) => {
     await dispatch(saveActivities([]));
     await dispatch(updateBoard([[0,0,0],[0,0,0],[0,0,0]]));
     if (lastGame.activities.length) {
-      let activePlayer = lastGame.activities[0].player.symbol === 'O' ? 'playerTwo' : 'playerOne';
+      let activePlayer = lastGame.activities[0].player.symbol === 1 ? 'playerTwo' : 'playerOne';
       dispatch(update('activePlayer', activePlayer));
     }
     onClose();
