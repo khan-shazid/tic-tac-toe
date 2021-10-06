@@ -5,12 +5,15 @@ import { AddIcon, CloseIcon } from '@chakra-ui/icons';
 import { useSelector, useDispatch, connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import { update, updateBoard, checkIfAnyMatchingCombination, saveGames, saveActivities } from './actions';
 import { TicTacToeBoard } from './components/TicTacToeBoard';
 import { ActivityLog } from './components/ActivityLog';
+import { GameHistory } from './components/GameHistory';
 import EnterPlayerNameModal from './components/EnterPlayerNameModal';
 import CongratsModal from './components/CongratsModal';
 import GameHistoryModal from './components/GameHistoryModal';
+
+import { update, updateBoard, checkIfAnyMatchingCombination, saveGames, saveActivities, clearSession } from './actions';
+import { copyObj, getCurrentTimestamp } from '../../services/Utility';
 
 function PlayTicTacToe ({players, activeBoard, currentGameActivities, activePlayer, previousGames}) {
   const [showPlayerNameEntryModal, setShowPlayerNameEntryModal] = useState(true);
@@ -28,6 +31,9 @@ function PlayTicTacToe ({players, activeBoard, currentGameActivities, activePlay
         dispatch(update('activePlayer', 'playerOne'));
       }
     }
+    if (players.playerOne.name && players.playerTwo.name) {
+      setShowPlayerNameEntryModal(false);
+    }
   }, []);
 
   const onChangeBoard = async(row, column) => {
@@ -41,16 +47,21 @@ function PlayTicTacToe ({players, activeBoard, currentGameActivities, activePlay
     }
     let activities = [...currentGameActivities, activity];
     await dispatch(saveActivities(activities));
-    let result = checkIfAnyMatchingCombination(board);
+    checkResultAndUpdateHistory(activities);
+  }
+
+  const checkResultAndUpdateHistory = async(activities) => {
+    let result = checkIfAnyMatchingCombination(activeBoard);
     if (result.verdict || activities.length === 9) {
       let lastGameDetails = {
+        gameId: previousGames.length,
         playerOne: players.playerOne,
         playerTwo: players.playerTwo,
-        activities: activities,
-        finalBoard: board,
+        activities: copyObj(activities),
+        finalBoard: copyObj(activeBoard),
         verdict: result.verdict ? result.verdict : 'draw',
         matchedCombinationTiles: result.matchedCombinationTiles,
-        createdAt: new Date(),
+        createdAt: getCurrentTimestamp(),
       }
       let temp = [...previousGames, lastGameDetails];
       await dispatch(saveGames(temp));
@@ -63,38 +74,40 @@ function PlayTicTacToe ({players, activeBoard, currentGameActivities, activePlay
     setShowGameHistory(true);
   }
 
+  const resetSession = () => {
+    dispatch(clearSession());
+    setShowPlayerNameEntryModal(true);
+  }
+
   return (
     <Flex>
       <Flex flex="1" direction="column" border="1px" borderColor={useColorModeValue('green.100', 'green.900')} mr={5} bg={useColorModeValue('green.50', 'green.900')}>
-        <Text align="center" fontSize={'lg'} fontWeight={900} bg={useColorModeValue('green.50', 'green.900')} p={10} px={3} color={'green.500'}>
+        <Text align="center" fontSize={'lg'} fontWeight={900} bg={useColorModeValue('green.50', 'green.900')} p={5} px={3} color={'green.500'}>
           -----------Board-----------
         </Text>
+        {
+          !showPlayerNameEntryModal ?
+          <Text align="center" fontSize={'lg'} fontWeight={900} pb="8" px={3} color={'blue.500'}>
+          {`${players.playerOne.name} VS ${players.playerTwo.name}`}
+          </Text> : <></>
+        }
+
         <TicTacToeBoard board={activeBoard} onChange={onChangeBoard} />
         {
           !showPlayerNameEntryModal && !showCongratsModal ?
-          <Text align="center" fontWeight={600} p={5} color="red.500">{`${players[activePlayer].name}'s turn to play`}</Text>
+          <Text align="center" fontSize="20" fontWeight={900} p={5} color="red.500">{`${players[activePlayer].name}'s turn to play`}</Text>
           :
           <Box mb={5}/>
         }
         <ActivityLog activities={currentGameActivities} />
+        <Button onClick={resetSession} colorScheme="blue" m="5">
+          Reset Session!
+        </Button>
       </Flex>
-      <Flex flex="1" border="1px" borderColor="gray.200" direction="column">
-        <Text align="center" fontSize="30" fontWeight={600} p={5} color="red.500">History</Text>
-        {
-          previousGames.map((game, i) => {
-            return (
-              <Flex justify="space-between" align="center">
-                <Text align="center" fontWeight={600} p={5}>#Game {i + 1} - </Text>
-                <Text fontSize='11' color='blue.400' fontWeight="800">{new Date(game.createdAt.toString().split('GMT')[0]+' UTC').toISOString().split('.')[0]}</Text>
-                <Button mr={5} onClick={() => showGameDetails(game)}>View</Button>
-              </Flex>
-            )
-          })
-        }
-      </Flex>
-      <EnterPlayerNameModal isOpen={showPlayerNameEntryModal} onClose={() => setShowPlayerNameEntryModal(false)} />
-      <CongratsModal isOpen={showCongratsModal} onClose={() => setShowCongratsModal(false)} />
-      {selectedGameHistory && <GameHistoryModal isOpen={showGameHistory} onClose={() => setShowGameHistory(false)} game={selectedGameHistory} />}
+      <GameHistory previousGames={previousGames} showGameDetails={showGameDetails}/>
+      <EnterPlayerNameModal isOpen={showPlayerNameEntryModal} onClose={() => setShowPlayerNameEntryModal(false)}/>
+      <CongratsModal isOpen={showCongratsModal} onClose={() => setShowCongratsModal(false)}/>
+      {selectedGameHistory && <GameHistoryModal isOpen={showGameHistory} onClose={() => setShowGameHistory(false)} game={selectedGameHistory}/>}
     </Flex>
 
   )

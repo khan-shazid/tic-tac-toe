@@ -38,6 +38,11 @@ export default function GameHistoryModal({isOpen, onClose, game}) {
   };
 
   useEffect(() => {
+    setBoard(game.finalBoard);
+    setActivities(game.activities);
+  }, [game])
+
+  useEffect(() => {
     let timer = null;
     if (showReplay) {
       timer = setInterval(() => {
@@ -55,7 +60,7 @@ export default function GameHistoryModal({isOpen, onClose, game}) {
       setActivities(game.activities);
     }
     return () => clearInterval(timer);
-  }, [showReplay, replayStepCounter])
+  }, [showReplay, replayStepCounter]);
 
   const replay = async() => {
     await setBoard(EMPTY_BOARD);
@@ -80,6 +85,7 @@ export default function GameHistoryModal({isOpen, onClose, game}) {
         <ModalHeader>Game histoy</ModalHeader>
         <ModalCloseButton  onClick={closeModal}/>
         <ModalBody pb={6}>
+          <Text pr="5" fontWeight="900">Result: {game.verdict === `draw` ? `Match drawn` : `${game[game.verdict].name} won the match!`}</Text>
           <Flex justify="space-between" align="center">
             <TicTacToeBoard board={board} matchedCombinationTiles={game.matchedCombinationTiles}/>
             <Box width="5"/>
@@ -88,7 +94,6 @@ export default function GameHistoryModal({isOpen, onClose, game}) {
         </ModalBody>
 
         <ModalFooter>
-          <Text pr="5">Result: {game.verdict === `draw` ? `Match drawn` : `${game[game.verdict].name} won the match!`}</Text>
           <Button onClick={replay} colorScheme="blue" disabled={showReplay}>
             Show Replay
           </Button>

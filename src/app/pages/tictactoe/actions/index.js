@@ -1,38 +1,75 @@
+import { CACHED_GAME_HISTORY, SESSIONED_ACTIVE_BOARD, SESSIONED_ACTIVE_ACTIVITY, SESSIONED_PLAYER_ONE, SESSIONED_PLAYER_TWO } from '../../../constants';
+
 export const updatePlayers = (data) => async (dispatch) => {
   dispatch({
-			type: 'SAVE_PLAYER',
-			payload: data
-		});
+		type: 'SAVE_PLAYER',
+		payload: data
+	});
 }
 
 export const updateBoard = (data) => async (dispatch) => {
+  sessionStorage.setItem(SESSIONED_ACTIVE_BOARD, JSON.stringify(data));
   dispatch({
-			type: 'SAVE_BOARD',
-			payload: data
-		});
+		type: 'SAVE_BOARD',
+		payload: data
+	});
 }
 
 export const update = (key, value) => async (dispatch) => {
   dispatch({
-			type: 'SAVE',
-			payload: {
-        key, value
-      }
-		});
+		type: 'SAVE',
+		payload: {
+      key, value
+    }
+	});
 }
 
 export const saveGames = (data) => async (dispatch) => {
-  dispatch({
-			type: 'SAVE_GAMES',
-			payload: data
-		});
+  localStorage.setItem(CACHED_GAME_HISTORY, JSON.stringify(data));
+  await dispatch({
+		type: 'SAVE_GAMES',
+		payload: data
+	});
 }
 
 export const saveActivities = (data) => async (dispatch) => {
+  sessionStorage.setItem(SESSIONED_ACTIVE_ACTIVITY, JSON.stringify(data));
   dispatch({
-			type: 'SAVE_ACTIVITIES',
-			payload: data
-		});
+		type: 'SAVE_ACTIVITIES',
+		payload: data
+	});
+}
+
+export const clearSession = () => async (dispatch) => {
+  sessionStorage.setItem(SESSIONED_ACTIVE_BOARD, '');
+  sessionStorage.setItem(SESSIONED_ACTIVE_ACTIVITY, '');
+  sessionStorage.setItem(SESSIONED_PLAYER_ONE, '');
+  sessionStorage.setItem(SESSIONED_PLAYER_TWO, '');
+  dispatch({
+		type: 'SAVE_ACTIVITIES',
+		payload: []
+	});
+  dispatch({
+		type: 'SAVE_BOARD',
+		payload: [[0,0,0],[0,0,0],[0,0,0]]
+	});
+  dispatch({
+		type: 'SAVE',
+		payload: {key: 'activePlayer', value: 'playerOne'}
+	});
+  dispatch({
+		type: 'SAVE_PLAYER',
+		payload: {
+      playerOne: { //{name, symbol/identity}
+        name: '',
+        symbol: 1
+      },
+      playerTwo: {
+        name: '',
+        symbol: 2
+      },
+    }
+	});
 }
 
 export const checkIfAnyMatchingCombination = (board) => {

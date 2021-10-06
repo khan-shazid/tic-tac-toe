@@ -1,20 +1,20 @@
-import { getCachedAllPokemons, getCachedMyPokemons } from '../pages/common/actions';
+import { getCachedGameHistory, getSessionActiveBoard, getSessionPlayerName, getSessionActiveActivity } from '../pages/common/actions';
 
 const initialState = {
-  activeBoard: [[0, 0, 0], [0, 0, 0], [0, 0, 0]],
+  activeBoard: getSessionActiveBoard(),
   players: {
-    playerOne: {
-      name: '',
+    playerOne: { //{name, symbol/identity}
+      name: getSessionPlayerName(1),
       symbol: 1
-    }, //{name, symbol/identity}
+    },
     playerTwo: {
-      name: '',
+      name: getSessionPlayerName(2),
       symbol: 2
     },
   },
-  currentGameActivities: [], //player(obj), row, column
+  currentGameActivities: getSessionActiveActivity(), //player(obj), row, column
   activePlayer: 'playerOne',
-  previousGames: [], //{playerOne, playerTwo, currentGameActivities, finalBoard, matchedCombinationTiles: [], verdict}
+  previousGames: getCachedGameHistory(), //{playerOne, playerTwo, currentGameActivities, finalBoard, matchedCombinationTiles: [], verdict}
 };
 
 export default (state = initialState, action) => {

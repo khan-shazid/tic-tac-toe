@@ -11,7 +11,7 @@ export const ActivityLog = ({ activities }) => {
       {
         activities.map((item, i) => {
           return (
-            <Text align="center" fontWeight={500} p={1} color={i%2 === 1 ? `blue.300` : `gray.500`}>{`${item.player.name} has chosen row - ${item.row}, column - ${item.column}`}</Text>
+            <Text key={`activity_${i}`} align="center" fontWeight={500} p={1} color={i%2 === 1 ? `blue.300` : `gray.500`}>{`#${i + 1} - ${item.player.name} has chosen row - ${item.row}, column - ${item.column}`}</Text>
           )
         })
       }

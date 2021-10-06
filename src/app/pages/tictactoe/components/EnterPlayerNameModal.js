@@ -16,6 +16,7 @@ import { useDispatch, useSelector, connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import { updatePlayers } from '../actions';
+import { savePlayerNameInSession } from '../../common/actions';
 
 const EnterPlayerNameModal = ({isOpen, onClose, players}) => {
   const { playerOne, playerTwo } = players;
@@ -25,6 +26,11 @@ const EnterPlayerNameModal = ({isOpen, onClose, players}) => {
     let temp = {...players};
     temp[e.target.name].name = e.target.value;
     await dispatch(updatePlayers(temp));
+  }
+
+  const start = () => {
+    savePlayerNameInSession(playerOne.name, playerTwo.name);
+    onClose();
   }
 
   return (
@@ -45,7 +51,7 @@ const EnterPlayerNameModal = ({isOpen, onClose, players}) => {
         </ModalBody>
 
         <ModalFooter>
-          <Button onClick={onClose} colorScheme="blue" disabled={!playerOne.name || !playerTwo.name}>
+          <Button onClick={start} colorScheme="blue" disabled={!playerOne.name || !playerTwo.name}>
             Start!
           </Button>
         </ModalFooter>
