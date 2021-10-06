@@ -19,7 +19,7 @@ export const BoardItem = ({value, onChange, withSuccessBackground, isHistory}) =
   }
   if (isHistory) {
     return (
-      <Flex align="center" justify="center" height="20" width="20" bg={gray_300} border={BASE_BORDER_WIDTH} borderColor={BaseBorderColor()}>
+      <Flex align="center" justify="center" height="20" width="20" bg={WHITE} border={BASE_BORDER_WIDTH} borderColor={BaseBorderColor()}>
       </Flex>
     )
   }
